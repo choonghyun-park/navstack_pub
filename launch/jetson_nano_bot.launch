@@ -1,0 +1,36 @@
+<launch>
+
+  <!-- Transformation Configuration ... Setting Up the Relationships Between Coordinate Frames --> 
+  <node pkg="heven_tf" type="heven_tf" name="heven_tf_node"/>
+
+  <!-- Initial Pose and Goal Publisher -->
+
+  <!-- Subscribe: /initialpose, /move_base_simple/goal -->
+
+  <!-- Lidar Data Publisher Using Velodyne driver -->
+  <!-- velodyne lidar -->
+    <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"> </include>
+    
+  <!-- Map File -->
+  <!-- <arg name="map_file" default="$(find navigation_data_pub)/maps/floorplan4.yaml"/> -->
+	
+  <!-- Map Server -->
+  <!-- Publish: /map, /map_metadata -->
+  <!-- <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" /> -->
+	
+  <!-- Add AMCL example for differential drive robots for Localization -->
+  <!-- Subscribe: /scan, /tf, /initialpose, /map -->
+  <!-- Publish: /amcl_pose, /particlecloud, /tf -->
+	
+  <!-- Move Base Node -->
+  <!-- Subscribe: /move_base_simple/goal -->
+  <!-- Publish: /cmd_vel -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find navstack_pub)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find navstack_pub)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find navstack_pub)/param/local_costmap_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find navstack_pub)/param/global_costmap_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find navstack_pub)/param/base_local_planner_params.yaml" command="load" />
+  </node>
+
+</launch>
